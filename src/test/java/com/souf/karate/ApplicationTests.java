@@ -8,22 +8,25 @@ import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.zeroturnaround.zip.ZipUtil;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
+import java.io.*;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+
 
 public class ApplicationTests {
 
     private static final String karateOutputPath = "target/surefire-reports";
     private static final String cucumberHtmlPath = "target/cucumber-html-reports";
-    private static final String pdfPath = "target/PdfReports";
+    private static final SimpleDateFormat sdf =
+            new SimpleDateFormat("'Y'yy-'M'MM-'D'dd-'hr'hh-'mn'mm", Locale.ENGLISH);
 
     @BeforeAll
     static void runBeforeTests(){
+        sdf.setTimeZone(TimeZone.getTimeZone("UTC"));
         System.out.println("run before tests");
     }
 
@@ -49,5 +52,10 @@ public class ApplicationTests {
     @AfterAll
     static void runAfterTests(){
         System.out.println("run after tests");
+
+        ZipUtil.pack(new File(cucumberHtmlPath),
+                new File("target/TestingReport-" + sdf.format(new Date()) + ".zip"));
     }
+
+
 }
